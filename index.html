@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TAD Web Prototype — Temporary Access Documents</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">TAD</div>
+      <div>
+        <strong>Temporary Access Documents</strong>
+        <span>Prototype under development</span>
+      </div>
+    </div>
+    <nav class="nav">
+      <button class="nav-btn active" data-view="home">Overview</button>
+      <button class="nav-btn" data-view="maker">TAD Maker</button>
+      <button class="nav-btn" data-view="viewer">TAD Viewer</button>
+      <button class="nav-btn" data-view="logic">Access Logic</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="home" class="view active hero-view">
+      <div class="hero-copy">
+        <div class="eyebrow">Privacy-aware document exchange</div>
+        <h1>From permanent file transfer to controlled temporary access.</h1>
+        <p>Convert ordinary PDFs, images, and documents into a protected <b>.tad</b> package that carries access rules such as expiry, view limits, print limits, and watermarking.</p>
+        <div class="cta-row">
+          <button class="primary" data-jump="maker">Create a TAD File</button>
+          <button class="secondary" data-jump="viewer">Open TAD Viewer</button>
+        </div>
+      </div>
+      <div class="hero-panel glass">
+        <div class="status-pill">Live Prototype Simulation</div>
+        <div class="flow-mini">
+          <div><span>1</span>Upload PDF</div>
+          <div><span>2</span>Set Rules</div>
+          <div><span>3</span>Create .tad</div>
+          <div><span>4</span>Open Viewer</div>
+          <div><span>5</span>Expire Access</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="maker" class="view">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Sender side</div>
+          <h2>TAD Maker</h2>
+          <p>Open an existing file, define access boundaries, and generate a controlled <b>.tad</b> package.</p>
+        </div>
+        <div class="under-dev">Under Development</div>
+      </div>
+
+      <div class="maker-grid">
+        <div class="card upload-card">
+          <h3>1. Source Document</h3>
+          <label class="dropzone" for="sourceFile">
+            <input id="sourceFile" type="file" accept="application/pdf,image/*,.txt,.doc,.docx" />
+            <div class="drop-icon">⌁</div>
+            <strong>Upload PDF / Image / Document</strong>
+            <span id="fileName">No file selected</span>
+          </label>
+          <div class="prototype-note">Prototype supports preview for PDF/images. Other files are packaged as controlled data.</div>
+        </div>
+
+        <div class="card policy-card">
+          <h3>2. Access Policy</h3>
+          <div class="field-row">
+            <label>Expiry</label>
+            <select id="expirySeconds">
+              <option value="30">30 seconds demo</option>
+              <option value="60">1 minute</option>
+              <option value="300">5 minutes</option>
+              <option value="600" selected>10 minutes</option>
+              <option value="3600">1 hour</option>
+            </select>
+          </div>
+          <div class="field-row">
+            <label>View Limit</label>
+            <input id="viewLimit" type="number" min="1" value="2" />
+          </div>
+          <div class="field-row">
+            <label>Print Limit</label>
+            <input id="printLimit" type="number" min="0" value="1" />
+          </div>
+          <div class="field-row">
+            <label>Purpose</label>
+            <input id="purpose" type="text" value="Verification / Printing" />
+          </div>
+          <div class="field-row">
+            <label>Watermark</label>
+            <input id="watermark" type="text" value="TAD Controlled Access" />
+          </div>
+          <button id="generateTad" class="primary wide">Generate .tad</button>
+        </div>
+
+        <div class="card result-card">
+          <h3>3. Protected Output</h3>
+          <div id="makerResult" class="empty-state">
+            <div class="secure-file">.tad</div>
+            <p>Your generated TAD file will appear here.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="viewer" class="view">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Receiver side</div>
+          <h2>TAD Viewer</h2>
+          <p>The viewer reads the embedded policy, validates conditions, and displays the content only while access is valid.</p>
+        </div>
+        <div id="viewerStatus" class="status-pill neutral">Waiting for .tad</div>
+      </div>
+
+      <div class="viewer-grid">
+        <div class="card viewer-upload">
+          <h3>Open .tad Package</h3>
+          <label class="dropzone small" for="tadFile">
+            <input id="tadFile" type="file" accept=".tad,application/json" />
+            <div class="drop-icon">◈</div>
+            <strong>Upload .tad file</strong>
+            <span id="tadFileName">No TAD file selected</span>
+          </label>
+          <button id="openGenerated" class="secondary wide" disabled>Open Generated Demo File</button>
+        </div>
+
+        <div class="card access-panel">
+          <h3>Access Policy</h3>
+          <div class="metric"><span>Status</span><b id="metricStatus">—</b></div>
+          <div class="metric"><span>Time Remaining</span><b id="metricTime">—</b></div>
+          <div class="metric"><span>Views Used</span><b id="metricViews">—</b></div>
+          <div class="metric"><span>Prints Used</span><b id="metricPrints">—</b></div>
+          <div class="metric"><span>Purpose</span><b id="metricPurpose">—</b></div>
+          <button id="printBtn" class="secondary wide" disabled>Print Document</button>
+          <div id="printMessage" class="print-message" aria-live="polite"></div>
+        </div>
+
+        <div class="card document-stage">
+          <div id="documentStage" class="empty-state large">
+            <div class="shield">⌛</div>
+            <h3>No document opened</h3>
+            <p>Upload a .tad package or generate one using TAD Maker.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="logic" class="view">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Prototype honesty</div>
+          <h2>Access Logic & Security Boundaries</h2>
+          <p>This demo focuses on workflow, policy logic, and the user experience of temporary access.</p>
+        </div>
+      </div>
+      <div class="logic-grid">
+        <div class="card good">
+          <h3>TAD Prototype Demonstrates</h3>
+          <ul>
+            <li>File packaging into .tad</li>
+            <li>Expiry enforcement simulation</li>
+            <li>View-limit tracking</li>
+            <li>Print-limit tracking</li>
+            <li>Watermark overlay</li>
+            <li>Expired access blocking</li>
+          </ul>
+        </div>
+        <div class="card warn">
+          <h3>Production Security Would Add</h3>
+          <ul>
+            <li>Stronger encryption and key management</li>
+            <li>Tamper-resistant native viewer controls</li>
+            <li>Secure local policy storage</li>
+            <li>Optional online trust checks</li>
+            <li>Device binding and audit logs</li>
+            <li>Advanced screenshot deterrence</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="credit-footer">
+    <span>Kamal Varma Chittari</span>
+    <span>@TAD</span>
+    <span>For a safer digital document world for tomorrow.</span>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
